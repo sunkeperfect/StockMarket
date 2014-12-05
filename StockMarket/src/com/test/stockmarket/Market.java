@@ -4,8 +4,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import com.google.gson.Gson;
 import com.test.stockmarket.model.Company;
 import com.test.stockmarket.model.Order;
 import com.test.stockmarket.model.Order.OrderType;
@@ -13,17 +14,19 @@ import com.test.stockmarket.model.TradingCenter;
 
 public class Market {
 
+	private static final long CHECKOUT_INTERVAL = 2 * 60 * 1000L;
+	
 	private final List<TradingCenter> mTradingCenters = new ArrayList<TradingCenter>();
+	
+	private IMarketDataSource mMarketDataSource = new TestMarketDataSource();
 	
 	private void loadTradingCenters() {
 		try {
-			Company[] companies = new Gson().fromJson(
-					new InputStreamReader(Market.class.getClassLoader()
-							.getResourceAsStream("com/test/stockmarket/companies.json")),
-					Company[].class);
+			List<Company> companies = mMarketDataSource.loadCompanies();
 			for (Company company : companies) {
 				System.out.println(company);
 				TradingCenter tradingCenter = new TradingCenter(company);
+				mMarketDataSource.loadTradingCenter(tradingCenter);
 				mTradingCenters.add(tradingCenter);
 			}
 			System.out.println("-");
@@ -67,32 +70,25 @@ public class Market {
 		System.out.println("-");
 	}
 	
+	/**
+	 * 触发交易市场结算
+	 */
+	private void checkoutAtInterval() {
+		for (TradingCenter tradingCenter : mTradingCenters) {
+			tradingCenter.checkout();
+		}
+	}
+	
 	// >>>>>>>>>>>>>>>>>>>>
 	// 模拟执行
 	private void simulation() {
-		// 测试卖出
-		new Thread() {
+		Timer timer = new Timer("market");
+		timer.schedule(new TimerTask() {
+			@Override
 			public void run() {
-				try {
-					BufferedReader reader = new BufferedReader(new InputStreamReader(
-							Market.class.getClassLoader().getResourceAsStream("com/test/stockmarket/test.txt")));
-					String line = null;
-					while(null != (line = reader.readLine())) {
-						String[] param = line.split("\\s+", 3);
-						Order sellOrder = new Order();
-						sellOrder.setStockCode(param[0]);
-						sellOrder.setNumber(Long.valueOf(param[1]));
-						sellOrder.setPrice(Float.valueOf(param[2]));
-						sell(sellOrder);
-					}
-					System.out.println("-");
-					System.out.println("-");
-					System.out.println("-");
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				checkoutAtInterval();
 			}
-		}.start();
+		}, 0, CHECKOUT_INTERVAL);
 	}
 	
 	public static void main(String[] args) {

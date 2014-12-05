@@ -1,5 +1,6 @@
 package com.test.stockmarket.model;
 
+import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -14,8 +15,25 @@ public class Order {
 	public static enum OrderType {
 		Buy, Sell
 	}
+	
+	// 升序
+	public static final Comparator<Order> sInc = new Comparator<Order>() {
+		@Override
+		public int compare(Order o1, Order o2) {
+			return Float.compare(o1.getPrice(), o2.getPrice());
+		}
+	};
+	
+	// 降序
+	public static final Comparator<Order> sDec = new Comparator<Order>() {
+		@Override
+		public int compare(Order o1, Order o2) {
+			return Float.compare(o1.getPrice(), o2.getPrice()) * (-1);
+		}
+	};
 
-	private static AtomicLong sID = new AtomicLong(5000L);
+	// 临时的ID生成器
+	private static final AtomicLong sID = new AtomicLong(5000L);
 	public Order() {
 		this.id = String.valueOf(sID.getAndIncrement());
 	}
