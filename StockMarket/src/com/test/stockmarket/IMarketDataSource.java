@@ -3,7 +3,6 @@ package com.test.stockmarket;
 import java.util.List;
 
 import com.test.stockmarket.model.Company;
-import com.test.stockmarket.model.TradingCenter;
 
 public interface IMarketDataSource {
 

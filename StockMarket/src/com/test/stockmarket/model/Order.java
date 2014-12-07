@@ -1,6 +1,5 @@
 package com.test.stockmarket.model;
 
-import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -16,28 +15,16 @@ public class Order {
 		Buy, Sell
 	}
 	
-	// 升序
-	public static final Comparator<Order> sInc = new Comparator<Order>() {
-		@Override
-		public int compare(Order o1, Order o2) {
-			return Float.compare(o1.getPrice(), o2.getPrice());
-		}
-	};
-	
-	// 降序
-	public static final Comparator<Order> sDec = new Comparator<Order>() {
-		@Override
-		public int compare(Order o1, Order o2) {
-			return Float.compare(o1.getPrice(), o2.getPrice()) * (-1);
-		}
-	};
-
 	// 临时的ID生成器
 	private static final AtomicLong sID = new AtomicLong(5000L);
 	public Order() {
 		this.id = String.valueOf(sID.getAndIncrement());
+		this.createAt = System.currentTimeMillis();
 	}
 
+	/**
+	 * 订单ID
+	 */
 	private String id;
 	/**
 	 * 交易数量
@@ -55,6 +42,10 @@ public class Order {
 	 * 订单类型
 	 */
 	private OrderType type;
+	/**
+	 * 订单创建时间
+	 */
+	private long createAt;
 	
 	public String getId() {
 		return id;
@@ -96,10 +87,24 @@ public class Order {
 		this.type = type;
 	}
 
+	public long getCreateAt() {
+		return createAt;
+	}
+
+	public void setCreateAt(long createAt) {
+		this.createAt = createAt;
+	}
+
 	@Override
 	public String toString() {
-		return "Order [id=" + id + ", number=" + number + ", price=" + price
-				+ ", stockCode=" + stockCode + ", type=" + type + "]";
+		return "Order [createAt=" + createAt + ", id=" + id + ", number="
+				+ number + ", price=" + price + ", stockCode=" + stockCode
+				+ ", type=" + type + "]";
+	}
+	
+	public String toSimpleString() {
+		return String.format("订单（%s——%s|%d|%.2f）", getId(),
+				getStockCode(), getNumber(), getPrice());
 	}
 
 }

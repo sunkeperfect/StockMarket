@@ -1,7 +1,5 @@
 package com.test.stockmarket;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -10,11 +8,10 @@ import java.util.TimerTask;
 import com.test.stockmarket.model.Company;
 import com.test.stockmarket.model.Order;
 import com.test.stockmarket.model.Order.OrderType;
-import com.test.stockmarket.model.TradingCenter;
 
 public class Market {
 
-	private static final long CHECKOUT_INTERVAL = 2 * 60 * 1000L;
+	private static final long CHECKOUT_INTERVAL = 5 * 1000L;//2 * 60 * 1000L;
 	
 	private final List<TradingCenter> mTradingCenters = new ArrayList<TradingCenter>();
 	
@@ -77,6 +74,9 @@ public class Market {
 		for (TradingCenter tradingCenter : mTradingCenters) {
 			tradingCenter.checkout();
 		}
+		System.out.println("-");
+		System.out.println("-");
+		System.out.println("-");
 	}
 	
 	// >>>>>>>>>>>>>>>>>>>>
@@ -86,6 +86,7 @@ public class Market {
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
+				System.out.println(Thread.currentThread());
 				checkoutAtInterval();
 			}
 		}, 0, CHECKOUT_INTERVAL);
