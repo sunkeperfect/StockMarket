@@ -259,11 +259,19 @@ public class TradingCenter {
 	}
 	
 	private static class Result {
-		private static final int END_NO_SELL = -1;
-		private static final int END_NO_MATCH = -2;
-		private static final int END_MATCHED_ENOUGH = -3;
-		private static final int END_MATCHED_NOT_ENOUGH = -4;
-		private static final int MATCHED_NOT_ENOUGH = 1;
+		private static final int END_MARK = 0xff000000;
+		private static final int END = 0x01000000;
+		
+		private static final int MATCHED_MARK = 0x00ffffff;
+		private static final int NO_SELL = 0x1;
+		private static final int NO_MATCH = 0x00;
+		private static final int MATCHED_ENOUGH = 0x10;
+		private static final int MATCHED_NOT_ENOUGH = 0x20;
+		
+		private static final int END_NO_SELL = END | NO_SELL;
+		private static final int END_NO_MATCH = END | NO_MATCH;
+		private static final int END_MATCHED_ENOUGH = END | MATCHED_ENOUGH;
+		private static final int END_MATCHED_NOT_ENOUGH = END | MATCHED_NOT_ENOUGH;
 		
 		public static Result obtain() {
 			return new Result();
@@ -290,7 +298,7 @@ public class TradingCenter {
 		private float matchedTotalPrice;
 		
 		public boolean isEndCode() {
-			return code < 0;
+			return (code & END_MARK) == END;
 		}
 		
 		public boolean isNumberMatched() {
