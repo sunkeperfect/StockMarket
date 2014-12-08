@@ -74,7 +74,6 @@ public class Market {
 		}
 		System.out.println("-");
 		System.out.println("-");
-		System.out.println("-");
 	}
 	
 	// >>>>>>>>>>>>>>>>>>>>
@@ -96,7 +95,7 @@ public class Market {
 		
 		Order buyOrder = new Order();
 		buyOrder.setStockCode("VIP");
-		buyOrder.setNumber(500);
+		buyOrder.setNumber(5000000000L);
 		buyOrder.setPrice(11.00f);
 		market.buy(buyOrder);
 		

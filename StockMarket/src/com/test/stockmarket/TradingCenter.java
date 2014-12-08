@@ -72,7 +72,7 @@ public class TradingCenter {
 		new Processor().process(this);
 	}
 	
-	private Order requestCreateSubOrder(Order buyOrder, Order sellOrder, long number) {
+	private Order requestCreateSubSellOrder(Order buyOrder, Order sellOrder, long number) {
 		Order subSellOrder = new Order();
 		subSellOrder.setStockCode(sellOrder.getStockCode());
 		subSellOrder.setType(sellOrder.getType());
@@ -80,7 +80,14 @@ public class TradingCenter {
 		subSellOrder.setNumber(number);
 		// TODO 扣除子订单的数量
 		sellOrder.setNumber(sellOrder.getNumber() - number);
+		buyOrder.setNumber(buyOrder.getNumber() - number);
 		return subSellOrder;
+	}
+	
+	private void requestPayOffSellOrder(Order buyOrder, Order sellOrder) {
+		buyOrder.setNumber(buyOrder.getNumber() - sellOrder.getNumber());
+		sellOrder.setNumber(0);
+		matchedSellList.add(sellOrder);
 	}
 	
 	// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -117,8 +124,8 @@ public class TradingCenter {
 		
 		private void doProcessAfterCheck(TradingCenter tradingCenter) {
 			// copy
-			ArrayList<Order> buyList = new ArrayList<Order>(tradingCenter.getBuyList());
-			ArrayList<Order> sellList = new ArrayList<Order>(tradingCenter.getSellList());
+			List<Order> buyList = new ArrayList<Order>(tradingCenter.getBuyList());
+			List<Order> sellList = tradingCenter.getSellList() ;//new ArrayList<Order>(tradingCenter.getSellList());
 			
 			//TODO “卖出”股票的订单进行升序排序
 			Collections.sort(sellList, TradingCenter.sInc);
@@ -133,16 +140,11 @@ public class TradingCenter {
 					// 综合处理结果
 					switch (result.code) {
 					case Result.END_MATCHED_ENOUGH:
-						System.out.println("匹配成功" + result.buyOder);
-						System.out.println("匹配成功：" + result.matchedSellOrders);
-						break;
 					case Result.END_MATCHED_NOT_ENOUGH:
-						// callback
+					case Result.END_NO_MATCH:
 						break;
 					case Result.END_NO_SELL:
 						break buyListIte;
-					case Result.END_NO_MATCH:
-						break;
 					}
 				}
 		}
@@ -167,103 +169,94 @@ public class TradingCenter {
 			}
 			
 			Result result = Result.obtain(buyOrder, Result.END_NO_MATCH);
-			// 购买股票订单的价格在出售价格的区间内
-			for (Order sellItem : sellList) {
-				//TODO 计算匹配的方案集合
-				if (sellItem.getPrice() <= buyOrder.getPrice()) {
-					matchCheaperSellOrder(buyOrder, sellItem, result);
-				} else {
-					matchExpensiveSellOrder(buyOrder, sellItem, result);
+			try {
+				// 购买股票订单的价格在出售价格的区间内
+				Iterator<Order> sellListIte = sellList.iterator();//buyList.descendingIterator();
+				while (sellListIte.hasNext()) {
+					Order sellItem = sellListIte.next();
+					//TODO 计算匹配的方案集合
+					matchSellOrder(buyOrder, sellItem, sellListIte, result);
+					// end code
+					if (result.isEndCode()) {
+						return result;
+					}
 				}
-				// end code
-				if (result.isEndCode()) {
-					return result ;
-				}
+				result.code = Result.END_NO_MATCH;
+				return result;
+			} finally {
+				System.out.println("订单（" + buyOrder.toSimpleString() + "）尚未匹配股票数：" + result.numberUnmatched());
+				System.out.println("方案集合：" + result.matchedSellOrders);
 			}
-			
-			return Result.obtain(Result.END_NO_MATCH);
 		}
 		
-		private void matchCheaperSellOrder(Order buyOrder, Order sellOrder, Result result) {
+		private void matchSellOrder(Order buyOrder, Order sellOrder, Iterator<Order> sellListIte, Result result) {
 			final long remaining = result.numberUnmatched();
-			// 售出价格不高于买入价格，判断数量
 			Order appendOrder = sellOrder;
-			long number = Math.min(remaining, appendOrder.getNumber());
-			boolean enough = (number >= remaining);
-			boolean exactly = (number == remaining);
 			
-			if (enough) {
-				result.code = Result.END_MATCHED_ENOUGH;
-				if (exactly) {
-					result.allMatchedSellOrders.add(appendOrder);
-				} else {
-					appendOrder = requestCreateSubOrder(buyOrder, appendOrder, number);
-				}
+			long maxMatchedNumber;
+			if (appendOrder.getPrice() <= buyOrder.getPrice()) {
+				maxMatchedNumber = appendOrder.getNumber();
 			} else {
-				result.code = Result.MATCHED_NOT_ENOUGH;
-				result.allMatchedSellOrders.add(appendOrder);
+				// 基于下面的不等式：
+				// 	原来的总价 + number * 超过的单价
+				// ————————————————————————————————  <= this.buyOrder.getPrice()
+				// 		原来的总数量 + number
+				float tpp = buyOrder.getPrice();
+				float tp = result.matchedTotalPrice;
+				float tn = result.matchedNumber;
+				float kp = sellOrder.getPrice();
+				maxMatchedNumber = Math.min((long) ((tn * tpp - tp) / (kp - tpp)), appendOrder.getNumber());
 			}
-			
-			result.matchedSellOrders.add(appendOrder);
-			result.matchedNumber += appendOrder.getNumber();
-			result.matchedTotalPrice += (appendOrder.getNumber() * appendOrder.getPrice());
-		}
-		
-		private void matchExpensiveSellOrder(Order buyOrder, Order sellOrder, Result result) {
-			final long remaining = result.numberUnmatched();
-			// 售出价格高于买入价格，判断数量
-			// 基于下面的不等式：
-			// 	原来的总价 + number * 超过的单价
-			// ————————————————————————————————  <= this.buyOrder.getPrice()
-			// 		原来的总数量 + number
-			float tpp = buyOrder.getPrice();
-			float tp = result.matchedTotalPrice;
-			float tn = result.matchedNumber;
-			
-			float kp = sellOrder.getPrice();
-			final long maxNeededNumber = Math.min((long) ((tn * tpp - tp) / (kp - tpp)), sellOrder.getNumber());
-			if (maxNeededNumber == 0) {
+			System.out.println("满足的量：" + maxMatchedNumber);
+			if (maxMatchedNumber == 0) {
 				result.code = Result.END_NO_MATCH;
 				return;
 			}
 			
-			// 售出价格不高于买入价格，判断数量
-			Order appendOrder = sellOrder;
-			long number = Math.min(remaining, maxNeededNumber);
-			boolean enough = (number >= remaining);
-			boolean exactly = (number == remaining);
+			// sellOrder是否够量
+			boolean enough = (maxMatchedNumber >= remaining);
+			// sellOrder是否刚好够量
+			boolean exactly = (maxMatchedNumber == remaining);
 			
-			if (maxNeededNumber > remaining) {
-				// 生成子订单
-				appendOrder = requestCreateSubOrder(buyOrder, appendOrder, number);
+			long appendedNumber = Math.min(maxMatchedNumber, remaining);
+			float appendedPrice = appendOrder.getPrice();
+			if (enough) {
 				result.code = Result.END_MATCHED_ENOUGH;
-			} else if (maxNeededNumber == remaining) {
-				result.code = Result.END_MATCHED_ENOUGH;
-				if (maxNeededNumber == appendOrder.getNumber()) {
+				if (exactly) {
+					requestPayOffSellOrder(buyOrder, appendOrder);
+					sellListIte.remove();
 					result.allMatchedSellOrders.add(appendOrder);
 				} else {
-					// maxNeededNumber < sellOrder.getNumber()
-					// 生成子订单
-					appendOrder = requestCreateSubOrder(buyOrder, appendOrder, number);
+					appendOrder = requestCreateSubSellOrder(buyOrder, appendOrder, remaining);
 				}
 			} else {
 				result.code = Result.MATCHED_NOT_ENOUGH;
+				requestPayOffSellOrder(buyOrder, appendOrder);
+				sellListIte.remove();
 				result.allMatchedSellOrders.add(appendOrder);
 			}
 			
 			result.matchedSellOrders.add(appendOrder);
-			result.matchedNumber += appendOrder.getNumber();
-			result.matchedTotalPrice += (appendOrder.getNumber() * appendOrder.getPrice());
+			result.matchedNumber += appendedNumber;
+			result.matchedTotalPrice += (appendedNumber * appendedPrice);
 		}
 		
 	}
 	
 	private static class Result {
-		private static final int END_NO_SELL = -1;
-		private static final int END_NO_MATCH = -2;
-		private static final int END_MATCHED_ENOUGH = -3;
-		private static final int END_MATCHED_NOT_ENOUGH = -4;
-		private static final int MATCHED_NOT_ENOUGH = 1;
+		private static final int END_MARK = 0xff000000;
+		private static final int END = 0x01000000;
+		
+		private static final int MATCHED_MARK = 0x00ffffff;
+		private static final int NO_SELL = 0x1;
+		private static final int NO_MATCH = 0x00;
+		private static final int MATCHED_ENOUGH = 0x10;
+		private static final int MATCHED_NOT_ENOUGH = 0x20;
+		
+		private static final int END_NO_SELL = END | NO_SELL;
+		private static final int END_NO_MATCH = END | NO_MATCH;
+		private static final int END_MATCHED_ENOUGH = END | MATCHED_ENOUGH;
+		private static final int END_MATCHED_NOT_ENOUGH = END | MATCHED_NOT_ENOUGH;
 		
 		public static Result obtain() {
 			return new Result();
@@ -290,15 +283,15 @@ public class TradingCenter {
 		private float matchedTotalPrice;
 		
 		public boolean isEndCode() {
-			return code < 0;
+			return (code & END_MARK) == END;
 		}
 		
 		public boolean isNumberMatched() {
-			return matchedNumber == buyOder.getNumber();
+			return buyOder.getNumber() == 0;
 		}
 		
 		public long numberUnmatched() {
-			return buyOder.getNumber() - matchedNumber;
+			return buyOder.getNumber();
 		}
 	}
 	
