@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.test.stockmarket.model.Company;
 import com.test.stockmarket.model.Order;
 import com.test.stockmarket.model.Order.OrderType;
 
@@ -14,34 +13,7 @@ public class Market {
 	private static final long CHECKOUT_INTERVAL = 5 * 1000L;//2 * 60 * 1000L;
 	
 	private final List<TradingCenter> mTradingCenters = new ArrayList<TradingCenter>();
-	
 	private IMarketDataSource mMarketDataSource = new TestMarketDataSource();
-	
-	private void loadTradingCenters() {
-		try {
-			List<Company> companies = mMarketDataSource.loadCompanies();
-			for (Company company : companies) {
-				System.out.println(company);
-				TradingCenter tradingCenter = new TradingCenter(company);
-				mMarketDataSource.loadTradingCenter(tradingCenter);
-				mTradingCenters.add(tradingCenter);
-			}
-			System.out.println("-");
-			System.out.println("-");
-			System.out.println("-");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private TradingCenter findTradingCenterBySN(String sn) {
-		for (TradingCenter tradingCenter : mTradingCenters) {
-			if (tradingCenter.getCompany().getStockCode().equals(sn)) {
-				return tradingCenter;
-			}
-		}
-		return null;
-	}
 	
 	public void buy(Order buyOrder) {
 		buyOrder.setType(OrderType.Buy);
@@ -67,6 +39,32 @@ public class Market {
 		System.out.println("-");
 	}
 	
+	private void loadTradingCenters() {
+		mTradingCenters.clear();
+		List<TradingCenter> tradingCenters = mMarketDataSource.loadTradingCenters();
+		if (null != tradingCenters) {
+			mTradingCenters.addAll(tradingCenters);
+		}
+		
+		for (TradingCenter tradingCenter : mTradingCenters) {
+			System.out.println(tradingCenter.toSimpleString());
+		}
+		System.out.println("-");
+		System.out.println("-");
+		System.out.println("-");
+		
+		//TODO data list changed
+	}
+	
+	private TradingCenter findTradingCenterBySN(String sn) {
+		for (TradingCenter tradingCenter : mTradingCenters) {
+			if (tradingCenter.getCompany().getStockCode().equals(sn)) {
+				return tradingCenter;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * 触发交易市场结算
 	 */
@@ -86,7 +84,6 @@ public class Market {
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				System.out.println(Thread.currentThread());
 				checkoutAtInterval();
 			}
 		}, 0, CHECKOUT_INTERVAL);
@@ -97,15 +94,15 @@ public class Market {
 		market.loadTradingCenters();
 		market.simulation();
 		
-		
-//		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		
 		Order buyOrder = new Order();
-		buyOrder.setStockCode("VIP2");
+		buyOrder.setStockCode("VIP");
 		buyOrder.setNumber(500);
 		buyOrder.setPrice(11.00f);
 		market.buy(buyOrder);
 		
+		
+		
+//		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		
 //		while(true) {
 //			

@@ -2,6 +2,7 @@ package com.test.stockmarket;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +14,22 @@ import com.test.stockmarket.model.Order.OrderType;
 
 public class TestMarketDataSource implements IMarketDataSource {
 
+	@Override
+	public List<TradingCenter> loadTradingCenters() {
+		List<TradingCenter> tradingCenters = new ArrayList<TradingCenter>();
+		try {
+			List<Company> companies = loadCompanies();
+			for (Company company : companies) {
+				TradingCenter tradingCenter = new TradingCenter(company);
+				loadTradingCenter(tradingCenter);
+				tradingCenters.add(tradingCenter);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return tradingCenters;
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Company> loadCompanies() {
@@ -45,9 +62,12 @@ public class TestMarketDataSource implements IMarketDataSource {
 						sellOrder.setType(OrderType.Sell);
 						tradingCenter.getSellList().add(sellOrder);
 					}
+					
+					try {
+						Thread.sleep(5L);
+					} catch (Exception e) {
+					}
 				}
-				System.out.println("loadTradingCenter--->" + tradingCenter.toSimpleString());
-				System.out.println("-");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
