@@ -133,6 +133,8 @@ public class TradingCenter {
 					// 综合处理结果
 					switch (result.code) {
 					case Result.END_MATCHED_ENOUGH:
+						System.out.println("匹配成功" + result.buyOder);
+						System.out.println("匹配成功：" + result.matchedSellOrders);
 						break;
 					case Result.END_MATCHED_NOT_ENOUGH:
 						// callback
