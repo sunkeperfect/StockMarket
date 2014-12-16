@@ -34,9 +34,6 @@
 	<mvc:default-servlet-handler />
 	<mvc:annotation-driven />
 
-<!-- 	<bean scope="singleton" name="market" -->
-<!-- 		class="com.stockmarket.Market" -->
-<!-- 		/> -->
 	<!-- 事务 -->
 <!-- 	<bean id="transactionManager" -->
 <!-- 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> -->

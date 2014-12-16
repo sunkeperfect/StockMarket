@@ -10,10 +10,20 @@ import com.stockmarket.model.Order.OrderType;
 
 public class Market {
 
+	private static Market sMarket;
+	public static void init() {
+		sMarket = new Market();
+	}
+	
+	public static Market getInstance() {
+		return sMarket;
+	}
+	
 	private static final long CHECKOUT_INTERVAL = 5 * 1000L;//2 * 60 * 1000L;
 	
 	private final List<TradingCenter> mTradingCenters = new ArrayList<TradingCenter>();
 	private IMarketDataSource mMarketDataSource = new TestMarketDataSource();
+	private Timer mTimer;
 	public Market() {
 		loadTradingCenters();
 		simulation();
@@ -41,6 +51,10 @@ public class Market {
 		}
 		tradingCenter.sell(sellOrder);
 		System.out.println("-");
+	}
+	
+	public void shut() {
+		mTimer.cancel();
 	}
 	
 	private void loadTradingCenters() {
@@ -83,8 +97,8 @@ public class Market {
 	// >>>>>>>>>>>>>>>>>>>>
 	// 模拟执行
 	private void simulation() {
-		Timer timer = new Timer("market");
-		timer.schedule(new TimerTask() {
+		mTimer = new Timer("market");
+		mTimer.schedule(new TimerTask() {
 			@Override
 			public void run() {
 				checkoutAtInterval();
@@ -102,26 +116,6 @@ public class Market {
 		buyOrder.setNumber(5000000000L);
 		buyOrder.setPrice(11.00f);
 		market.buy(buyOrder);
-		
-		
-		
-//		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-		
-//		while(true) {
-//			
-//			try {
-//				String code = reader.readLine();
-//				if ("1".equals(code)) {
-//					order = new Order();
-//					TradingCenter tradingCenter1 = mTradingCenters.get(0);
-//				} else if () {
-//					
-//				}
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//			
-//		}
 	}
 	
 }

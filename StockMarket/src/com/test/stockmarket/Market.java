@@ -1,6 +1,10 @@
 package com.test.stockmarket;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -89,18 +93,31 @@ public class Market {
 	}
 	
 	public static void main(String[] args) {
-		final Market market = new Market();
-		market.loadTradingCenters();
-		market.simulation();
+//		final Market market = new Market();
+//		market.loadTradingCenters();
+//		market.simulation();
+//		
+//		Order buyOrder = new Order();
+//		buyOrder.setStockCode("VIP");
+//		buyOrder.setNumber(5000000000L);
+//		buyOrder.setPrice(11.00f);
+//		market.buy(buyOrder);
 		
-		Order buyOrder = new Order();
-		buyOrder.setStockCode("VIP");
-		buyOrder.setNumber(5000000000L);
-		buyOrder.setPrice(11.00f);
-		market.buy(buyOrder);
 		
-		
-		
+		Enumeration<URL> urls;
+		try {
+			urls = Market.class.getClassLoader().getResources("com/test/");
+			System.out.println(urls);
+			while(urls.hasMoreElements()) {
+				URL url = urls.nextElement();
+				System.out.println(url);
+				System.out.println(url.getAuthority());
+				System.out.println(url.getFile());
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 //		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		
 //		while(true) {
