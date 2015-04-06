@@ -109,8 +109,7 @@ public class Market {
 	public static void main(String[] args) {
 		final Market market = new Market();
 		market.loadTradingCenters();
-		market.simulation();
-		
+		market.simulation();		
 		Order buyOrder = new Order();
 		buyOrder.setStockCode("VIP");
 		buyOrder.setNumber(5000000000L);
