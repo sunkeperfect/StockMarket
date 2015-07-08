@@ -2,6 +2,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans   
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
            http://www.springframework.org/schema/context   
@@ -13,11 +14,13 @@
  		http://www.springframework.org/schema/tx 
  		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd"
 	default-autowire="byName">
-	
-	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
 		<property name="messageConverters">
 			<list>
-				<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<bean
+					class="org.springframework.http.converter.StringHttpMessageConverter">
 					<property name="supportedMediaTypes">
 						<list>
 							<value>text/plain;charset=UTF-8</value>
@@ -35,19 +38,63 @@
 	<mvc:annotation-driven />
 
 	<!-- 事务 -->
-<!-- 	<bean id="transactionManager" -->
-<!-- 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> -->
-<!-- 		<property name="dataSource" ref="dataSource" /> -->
-<!-- 	</bean> -->
+	<!-- <bean id="transactionManager" -->
+	<!-- class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> -->
+	<!-- <property name="dataSource" ref="dataSource" /> -->
+	<!-- </bean> -->
 	<!-- 数据源 -->
-<!-- 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" -->
-<!-- 		destroy-method="close"> -->
-<!-- 		<property name="driverClassName" value="com.mysql.jdbc.Driver" /> -->
-<!-- 		<property name="url" -->
-<!-- 			value="jdbc:mysql://findyou02.mysql.rds.aliyuncs.com:3306/findyou" /> -->
-<!-- 		<property name="username" value="fy_developer" /> -->
-<!-- 		<property name="password" value="123qweASD" /> -->
-<!-- 	</bean> -->
+	<!-- <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" -->
+	<!-- destroy-method="close"> -->
+	<!-- <property name="driverClassName" value="com.mysql.jdbc.Driver" /> -->
+	<!-- <property name="url" -->
+	<!-- value="jdbc:mysql://findyou02.mysql.rds.aliyuncs.com:3306/findyou" 
+		/> -->
+	<!-- <property name="username" value="fy_developer" /> -->
+	<!-- <property name="password" value="123qweASD" /> -->
+	<!-- </bean> -->
+	<!-- 导入外部的properties文件 -->
+	<context:property-placeholder location="classpath:jdbc.properties" />
+	<!-- 配置SessionFactory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<!-- 指定hibernate的配置文件位置 -->
+		<property name="configLocation" value="classpath:hibernate.cfg.xml"></property>
+		<!-- 配置c3p0数据库连接池 -->
+		<property name="dataSource">
+			<bean class="com.mchange.v2.c3p0.ComboPooledDataSource">
+				<!-- 数据连接信息 -->
+				<property name="jdbcUrl" value="${jdbcUrl}"></property>
+				<property name="driverClass" value="${driverClass}"></property>
+				<property name="user" value="${user}"></property>
+				<property name="password" value="${password}"></property>
+				<!-- 其他配置 -->
+				<!--初始化时获取三个连接，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
+				<property name="initialPoolSize" value="3"></property>
+				<!--连接池中保留的最小连接数。Default: 3 -->
+				<property name="minPoolSize" value="3"></property>
+				<!--连接池中保留的最大连接数。Default: 15 -->
+				<property name="maxPoolSize" value="15"></property>
+				<!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。Default: 3 -->
+				<property name="acquireIncrement" value="3"></property>
+				<!-- 控制数据源内加载的PreparedStatements数量。如果maxStatements与maxStatementsPerConnection均为0，则缓存被关闭。Default: 
+					0 -->
+				<property name="maxStatements" value="8"></property>
+				<!--maxStatementsPerConnection定义了连接池内单个连接所拥有的最大缓存statements数。Default: 
+					0 -->
+				<property name="maxStatementsPerConnection" value="5"></property>
+				<!--最大空闲时间,1800秒内未使用则连接被丢弃。若为0则永不丢弃。Default: 0 -->
+				<property name="maxIdleTime" value="1800"></property>
+			</bean>
+		</property>
+	</bean>
+	<!-- 配置声明式事务管理（采用注解的方式） -->
+	<bean id="txManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<tx:annotation-driven transaction-manager="txManager" />
+
+
 	<!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
 	<bean
 		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />

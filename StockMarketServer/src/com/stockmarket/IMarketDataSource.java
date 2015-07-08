@@ -7,12 +7,12 @@ import com.stockmarket.model.Company;
 public interface IMarketDataSource {
 
 	/**
-	 * 加载所有交易中心
+	 * 加载数据库所有交易中心
 	 */
 	List<TradingCenter> loadTradingCenters();
 	
 	/**
-	 * 加载公司信息
+	 * 加载数据库公司信息
 	 */
 	List<Company> loadCompanies();
 	

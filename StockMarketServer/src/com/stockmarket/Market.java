@@ -38,7 +38,6 @@ public class Market {
 			return ;
 		}
 		tradingCenter.buy(buyOrder);
-		System.out.println("-");
 	}
 	
 	public void sell(Order sellOrder) {
@@ -50,13 +49,14 @@ public class Market {
 			return ;
 		}
 		tradingCenter.sell(sellOrder);
-		System.out.println("-");
 	}
 	
 	public void shut() {
 		mTimer.cancel();
 	}
-	
+	/**
+	 * 加载交易
+	 */
 	private void loadTradingCenters() {
 		mTradingCenters.clear();
 		List<TradingCenter> tradingCenters = mMarketDataSource.loadTradingCenters();
@@ -106,15 +106,13 @@ public class Market {
 		}, 0, CHECKOUT_INTERVAL);
 	}
 	
-	public static void main(String[] args) {
-		final Market market = new Market();
-		market.loadTradingCenters();
-		market.simulation();		
-		Order buyOrder = new Order();
-		buyOrder.setStockCode("VIP");
-		buyOrder.setNumber(5000000000L);
-		buyOrder.setPrice(11.00f);
-		market.buy(buyOrder);
-	}
-	
+//	public static void main(String[] args) {
+//		final Market market = new Market();
+//		Order buyOrder = new Order();
+//		buyOrder.setStockCode("VIP");
+//		buyOrder.setNumber(5000000000L);
+//		buyOrder.setPrice(11.00f);
+//		market.buy(buyOrder);
+//	}
+
 }

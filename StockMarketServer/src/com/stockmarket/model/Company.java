@@ -7,8 +7,14 @@ package com.stockmarket.model;
  *
  */
 public class Company {
-
+	private int id;
+	/**
+	 * 股票名称
+	 */
 	private String name;
+	/**
+	 * 股票代码
+	 */
 	private String stockCode;
 	/**
 	 * 发行股数
@@ -18,8 +24,10 @@ public class Company {
 	 * 流通股数量
 	 */
 	private long circulatingStock;
+	private String description;
 
-	public Company(String name, String stockCode, long stockTotal, long circulatingStock) {
+	public Company(String name, String stockCode, long stockTotal,
+			long circulatingStock) {
 		super();
 		this.name = name;
 		this.stockCode = stockCode;
@@ -34,7 +42,7 @@ public class Company {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public String getStockCode() {
 		return stockCode;
 	}
@@ -59,10 +67,27 @@ public class Company {
 		this.circulatingStock = circulatingStock;
 	}
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	@Override
 	public String toString() {
-		return "Company [name=" + name + ", stockCode=" + stockCode + ", stockTotal="
-				+ stockTotal + ", circulatingStock=" + circulatingStock + "]";
+		return "Company [name=" + name + ", stockCode=" + stockCode
+				+ ", stockTotal=" + stockTotal + ", circulatingStock="
+				+ circulatingStock + "]";
 	}
-	
+
 }
