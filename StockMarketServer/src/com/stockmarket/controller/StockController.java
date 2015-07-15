@@ -22,4 +22,18 @@ public class StockController {
 		result.setValue(order);
 		return result;
 	}
+	/**
+	 * 测试
+	 * 
+	 */
+	@RequestMapping(value="test",method=RequestMethod.GET)
+	public Object getTest(){
+		JsonResult result = new JsonResult();
+		result.setStatus(200);
+		result.setMsg("操作成功");
+		Order order = new Order();
+		result.setValue(order);
+		return result;
+	}
+	
 }
