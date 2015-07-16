@@ -1,6 +1,8 @@
 package com.stockmarket.model;
 
-public class JsonResult {
+import java.io.Serializable;
+
+public class JsonResult implements Serializable {
 	public JsonResult() {
 		status = 10000;
 		msg = "服务器处理异常！";

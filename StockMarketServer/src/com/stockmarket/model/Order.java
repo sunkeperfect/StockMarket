@@ -1,5 +1,6 @@
 package com.stockmarket.model;
 
+import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -9,7 +10,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author yong01.yin
  *
  */
-public class Order {
+public class Order implements Serializable {
 
 	public static enum OrderType {
 		Buy, Sell
