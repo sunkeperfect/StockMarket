@@ -52,7 +52,19 @@ public class TradingCenter {
 	public Company getCompany() {
 		return this.company;
 	}
-
+	/**
+	 * 获取盘口数据
+	 */
+	public List<Order> getTradingList(){
+		List<Order> list=new ArrayList<Order>();
+		list.addAll(buyList);
+		list.addAll(sellList);
+		return list;
+	}
+	/**
+	 * 
+	 * @param order
+	 */
 	public synchronized void buy(Order order) {
 		System.out.println(String.format("有人想要以单价%.2f元买入'%s'公司%d股",
 				order.getPrice(), getCompany().getName(), order.getNumber()));

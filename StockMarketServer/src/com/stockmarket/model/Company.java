@@ -17,7 +17,7 @@ public class Company {
 	 */
 	private String stockCode;
 	/**
-	 * 发行股数
+	 * 股票数量
 	 */
 	private long stockTotal;
 	/**
@@ -25,7 +25,7 @@ public class Company {
 	 */
 	private long circulatingStock;
 	private String description;
-
+	
 	public Company(String name, String stockCode, long stockTotal,
 			long circulatingStock) {
 		super();

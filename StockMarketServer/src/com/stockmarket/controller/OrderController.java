@@ -7,12 +7,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.stockmarket.Market;
+import com.stockmarket.TradingCenter;
 import com.stockmarket.model.JsonResult;
 import com.stockmarket.model.Order;
 
 @Controller
 public class OrderController {
 
+	
+	
+	/**
+	 * 
+	 * @param order
+	 * @return
+	 */
 	@RequestMapping(value="/order/buy", method = RequestMethod.POST)
 	public @ResponseBody JsonResult buy(@ModelAttribute("order") Order order) {
 		JsonResult result = new JsonResult();
@@ -57,5 +65,5 @@ public class OrderController {
 		result.setValue(order);
 		return result;
 	}
-	
+
 }

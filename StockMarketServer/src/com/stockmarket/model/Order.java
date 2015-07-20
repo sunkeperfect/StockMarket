@@ -47,7 +47,16 @@ public class Order implements Serializable {
 	 * 订单创建时间
 	 */
 	private long createAt;
+	private int userId;
 	
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
 	public String getId() {
 		return id;
 	}

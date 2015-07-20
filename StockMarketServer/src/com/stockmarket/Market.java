@@ -73,8 +73,12 @@ public class Market {
 		
 		//TODO data list changed
 	}
-	
-	private TradingCenter findTradingCenterBySN(String sn) {
+	/**
+	 * 根据stockcode获取交易中心
+	 * @param sn
+	 * @return
+	 */
+	public TradingCenter findTradingCenterBySN(String sn) {
 		for (TradingCenter tradingCenter : mTradingCenters) {
 			if (tradingCenter.getCompany().getStockCode().equals(sn)) {
 				return tradingCenter;
