@@ -34,7 +34,7 @@ public class Order implements Serializable {
 	/**
 	 * 价格
 	 */
-	private float price;
+	private long price;
 	/**
 	 * 股票编码
 	 */
@@ -73,11 +73,11 @@ public class Order implements Serializable {
 		this.number = number;
 	}
 
-	public float getPrice() {
+	public long getPrice() {
 		return price;
 	}
 
-	public void setPrice(float price) {
+	public void setPrice(long price) {
 		this.price = price;
 	}
 

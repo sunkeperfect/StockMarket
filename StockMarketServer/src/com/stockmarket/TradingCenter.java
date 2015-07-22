@@ -17,7 +17,7 @@ import com.stockmarket.model.Order;
  *
  */
 public class TradingCenter {
-
+	
 	// 按照股票价格升序，同样的价格再按照创建时间早晚升序
 	static final Comparator<Order> sInc = new Comparator<Order>() {
 		@Override
@@ -39,11 +39,20 @@ public class TradingCenter {
 	};
 
 	private final Company company;
+	private long currentPrice;
 	// 购买订单必须按照创建订单的顺序，以便再结算时按照顺序依次结算
 	private final LinkedList<Order> buyList = new LinkedList<Order>();
 	private final LinkedList<Order> sellList = new LinkedList<Order>();
 	private final LinkedList<Order> matchedBuyList = new LinkedList<Order>();
 	private final LinkedList<Order> matchedSellList = new LinkedList<Order>();
+	
+	public long getCurrentPrice() {
+		return currentPrice;
+	}
+
+	public void setCurrentPrice(long currentPrice) {
+		this.currentPrice = currentPrice;
+	}
 
 	public TradingCenter(Company company) {
 		this.company = company;

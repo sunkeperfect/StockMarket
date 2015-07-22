@@ -58,7 +58,7 @@ public class TestMarketDataSource implements IMarketDataSource {
 						Order sellOrder = new Order();
 						sellOrder.setStockCode(param[0]);
 						sellOrder.setNumber(Long.valueOf(param[1]));
-						sellOrder.setPrice(Float.valueOf(param[2]));
+						sellOrder.setPrice(Long.valueOf(param[2]));
 						sellOrder.setType(OrderType.Sell);
 						tradingCenter.getSellList().add(sellOrder);
 					}

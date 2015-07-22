@@ -4,21 +4,21 @@ import java.io.Serializable;
 
 public class JsonResult implements Serializable {
 	public JsonResult() {
-		status = 10000;
+		code = 10000;
 		msg = "服务器处理异常！";
-		value = null;
+		data = null;
 	}
 
-	int status;
+	int code;
 	String msg;
-	Object value;
+	Object data;
 
-	public int getStatus() {
-		return status;
+	public int getCode() {
+		return code;
 	}
 
-	public void setStatus(int status) {
-		this.status = status;
+	public void setCode(int code) {
+		this.code = code;
 	}
 
 	public String getMsg() {
@@ -29,12 +29,12 @@ public class JsonResult implements Serializable {
 		this.msg = msg;
 	}
 
-	public Object getValue() {
-		return value;
+	public Object getData() {
+		return data;
 	}
 
-	public void setValue(Object value) {
-		this.value = value;
+	public void setData(Object value) {
+		this.data	 = value;
 	}
 
 }

@@ -20,13 +20,13 @@ public class TradingController {
 		JsonResult result = new JsonResult();
 		TradingCenter tradingCenter = Market.getInstance().findTradingCenterBySN(stock_code);
 		if (tradingCenter == null) {
-			result.setStatus(200);
+			result.setCode(200);
 			result.setMsg("没有这个公司!");
 			return result;
 		}
-		result.setStatus(200);
+		result.setCode(200);
 		result.setMsg("成功");
-		result.setValue(tradingCenter.getTradingList());
+		result.setData(tradingCenter.getTradingList());
 		return result;
 	}
 }

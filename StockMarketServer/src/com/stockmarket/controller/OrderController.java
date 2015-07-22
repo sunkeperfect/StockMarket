@@ -37,10 +37,10 @@ public class OrderController {
 		
 		Market.getInstance().buy(order);
 		
-		result.setStatus(200);
+		result.setCode(200);
 		result.setMsg("操作成功");
 		
-		result.setValue(order);
+		result.setData(order);
 		return result;
 	}
 	
@@ -58,11 +58,9 @@ public class OrderController {
 		}
 		
 		Market.getInstance().sell(order);
-		
-		result.setStatus(200);
+		result.setCode(200);
 		result.setMsg("操作成功");
-		
-		result.setValue(order);
+		result.setData(order);
 		return result;
 	}
 

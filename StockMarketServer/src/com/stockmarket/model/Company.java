@@ -17,6 +17,10 @@ public class Company {
 	 */
 	private String stockCode;
 	/**
+	 * 股票数字代码
+	 */
+	private String numberCode;
+	/**
 	 * 股票数量
 	 */
 	private long stockTotal;
