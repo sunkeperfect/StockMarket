@@ -1,4 +1,4 @@
-package com.stockmarket;
+package com.stockmarket.market;
 
 import java.util.List;
 

@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.stockmarket.Market;
-import com.stockmarket.TradingCenter;
+import com.stockmarket.market.Market;
+import com.stockmarket.market.TradingCenter;
 import com.stockmarket.model.JsonResult;
 import com.stockmarket.model.Order;
 

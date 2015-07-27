@@ -1,6 +1,6 @@
 package com.stockmarket.model;
 
-import com.stockmarket.TradingCenter;
+import com.stockmarket.market.TradingCenter;
 
 public class Stock {
 	public Stock(TradingCenter trading){

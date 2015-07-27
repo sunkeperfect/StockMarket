@@ -3,7 +3,7 @@ package com.stockmarket.servlet;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import com.stockmarket.Market;
+import com.stockmarket.market.Market;
 
 public class MyServeltContextListener implements ServletContextListener {
 

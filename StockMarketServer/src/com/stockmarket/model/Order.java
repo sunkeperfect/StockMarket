@@ -48,6 +48,8 @@ public class Order implements Serializable {
 	 */
 	private long createAt;
 	private int userId;
+	private int status;
+	private String statusName;
 	
 	public int getUserId() {
 		return userId;
@@ -103,6 +105,22 @@ public class Order implements Serializable {
 
 	public void setCreateAt(long createAt) {
 		this.createAt = createAt;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public String getStatusName() {
+		return statusName;
+	}
+
+	public void setStatusName(String statusName) {
+		this.statusName = statusName;
 	}
 
 	@Override

@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
-import com.stockmarket.Market;
-import com.stockmarket.MarketDataProvide;
-import com.stockmarket.TradingCenter;
+import com.stockmarket.market.Market;
+import com.stockmarket.market.MarketDataProvide;
+import com.stockmarket.market.TradingCenter;
 import com.stockmarket.model.JsonResult;
 import com.stockmarket.model.Order;
 import com.stockmarket.model.Stock;
