@@ -1,5 +1,8 @@
 package com.stockmarket.market;
 
-public interface ITradingCenter {
+import com.stockmarket.model.Order;
 
+public interface ITradingCenter {
+	void sell(Order order);
+	void buy(Order order);
 }
