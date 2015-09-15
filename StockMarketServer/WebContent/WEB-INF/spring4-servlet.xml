@@ -13,11 +13,13 @@
  		http://www.springframework.org/schema/tx 
  		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd"
 	default-autowire="byName">
-	
-	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
 		<property name="messageConverters">
 			<list>
-				<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<bean
+					class="org.springframework.http.converter.StringHttpMessageConverter">
 					<property name="supportedMediaTypes">
 						<list>
 							<value>text/plain;charset=UTF-8</value>
@@ -35,24 +37,27 @@
 	<mvc:annotation-driven />
 
 	<!-- 事务 -->
-<!-- 	<bean id="transactionManager" -->
-<!-- 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> -->
-<!-- 		<property name="dataSource" ref="dataSource" /> -->
-<!-- 	</bean> -->
+	<!-- <bean id="transactionManager" -->
+	<!-- class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> -->
+	<!-- <property name="dataSource" ref="dataSource" /> -->
+	<!-- </bean> -->
 	<!-- 数据源 -->
-<!-- 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" -->
-<!-- 		destroy-method="close"> -->
-<!-- 		<property name="driverClassName" value="com.mysql.jdbc.Driver" /> -->
-<!-- 		<property name="url" -->
-<!-- 			value="jdbc:mysql://findyou02.mysql.rds.aliyuncs.com:3306/findyou" /> -->
-<!-- 		<property name="username" value="fy_developer" /> -->
-<!-- 		<property name="password" value="123qweASD" /> -->
-<!-- 	</bean> -->
+	<!-- <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" -->
+	<!-- destroy-method="close"> -->
+	<!-- <property name="driverClassName" value="com.mysql.jdbc.Driver" /> -->
+	<!-- <property name="url" -->
+	<!-- value="jdbc:mysql://findyou02.mysql.rds.aliyuncs.com:3306/findyou" 
+		/> -->
+	<!-- <property name="username" value="fy_developer" /> -->
+	<!-- <property name="password" value="123qweASD" /> -->
+	<!-- </bean> -->
 	<!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
-		<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
 		<property name="messageConverters">
 			<list>
-				<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<bean
+					class="org.springframework.http.converter.StringHttpMessageConverter">
 					<property name="supportedMediaTypes">
 						<list>
 							<value>text/plain;charset=UTF-8</value>
@@ -66,7 +71,7 @@
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
 		p:prefix="/WEB-INF/view/" p:suffix=".jsp">
-	</bean> 
-	
+	</bean>
+
 	<!-- 自定义exception处理 -->
 </beans>  
