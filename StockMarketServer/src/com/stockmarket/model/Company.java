@@ -1,12 +1,34 @@
 package com.stockmarket.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 /**
  * 公司模型
  * 
  * @author yong01.yin
  *
  */
+@Entity
 public class Company {
+	public Company(){
+		
+	}
+	public Company(int id, String name, String stockCode, String numberCode, long stockTotal, long circulateStock,
+			String description) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.stockCode = stockCode;
+		this.numberCode = numberCode;
+		this.stockTotal = stockTotal;
+		this.circulateStock = circulateStock;
+		this.description = description;
+	}
+
+	@Id
+	@GeneratedValue
 	private int id;
 	/**
 	 * 股票名称
@@ -27,71 +49,56 @@ public class Company {
 	/**
 	 * 流通股数量
 	 */
-	private long circulatingStock;
+	private long circulateStock;
 	private String description;
-	
-	public Company(String name, String stockCode, long stockTotal,
-			long circulatingStock) {
-		super();
-		this.name = name;
-		this.stockCode = stockCode;
-		this.stockTotal = stockTotal;
-		this.circulatingStock = circulatingStock;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getStockCode() {
-		return stockCode;
-	}
-
-	public void setStockCode(String stockCode) {
-		this.stockCode = stockCode;
-	}
-
-	public long getStockTotal() {
-		return stockTotal;
-	}
-
-	public void setStockTotal(long stockTotal) {
-		this.stockTotal = stockTotal;
-	}
-
-	public long getCirculatingStock() {
-		return circulatingStock;
-	}
-
-	public void setCirculatingStock(long circulatingStock) {
-		this.circulatingStock = circulatingStock;
-	}
-
 	public int getId() {
 		return id;
 	}
-
 	public void setId(int id) {
 		this.id = id;
 	}
-
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getStockCode() {
+		return stockCode;
+	}
+	public void setStockCode(String stockCode) {
+		this.stockCode = stockCode;
+	}
+	public String getNumberCode() {
+		return numberCode;
+	}
+	public void setNumberCode(String numberCode) {
+		this.numberCode = numberCode;
+	}
+	public long getStockTotal() {
+		return stockTotal;
+	}
+	public void setStockTotal(long stockTotal) {
+		this.stockTotal = stockTotal;
+	}
+	public long getCirculateStock() {
+		return this.circulateStock;
+	}
+	public void setCirculateStock(long circulateStock) {
+		this.circulateStock = circulateStock;
+	}
 	public String getDescription() {
 		return description;
 	}
-
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
 	@Override
 	public String toString() {
-		return "Company [name=" + name + ", stockCode=" + stockCode
-				+ ", stockTotal=" + stockTotal + ", circulatingStock="
-				+ circulatingStock + "]";
+		return "Company [id=" + id + ", name=" + name + ", stockCode=" + stockCode + ", numberCode=" + numberCode
+				+ ", stockTotal=" + stockTotal + ", circulatingStock=" + circulateStock + ", description="
+				+ description + "]";
 	}
+
 
 }

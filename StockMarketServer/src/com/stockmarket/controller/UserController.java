@@ -10,5 +10,11 @@ public class UserController {
 	public void register(){
 		
 	}
+	/**
+	 * 自动注册
+	 */
+	public void autoRegister(){
+		
+	}
 	
 }

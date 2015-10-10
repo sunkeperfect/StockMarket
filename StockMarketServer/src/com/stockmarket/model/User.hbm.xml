@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
-<!-- Generated 2015-9-15 16:48:31 by Hibernate Tools 3.4.0.CR1 -->
+<!-- Generated 2015-10-10 18:22:22 by Hibernate Tools 3.4.0.CR1 -->
 <hibernate-mapping>
     <class name="com.stockmarket.model.User" table="USER">
         <id name="id" type="int">
@@ -20,8 +20,11 @@
         <property name="user_token" type="java.lang.String">
             <column name="USER_TOKEN" />
         </property>
-        <property name="device_id" type="java.lang.String" access="field">
+        <property name="device_id" type="java.lang.String">
             <column name="DEVICE_ID" />
+        </property>
+        <property name="temp_id" type="java.lang.String">
+            <column name="TEMP_ID" />
         </property>
     </class>
 </hibernate-mapping>
