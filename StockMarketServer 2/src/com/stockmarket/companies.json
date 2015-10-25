@@ -1,0 +1,26 @@
+[
+{
+		name: "唯品会",
+		stockCode: "VIP",
+		stockTotal: 1000000,
+		circulatingStock: 500000
+	},
+	{
+		name: "百度",
+		stockCode: "Baidu",
+		stockTotal: 1000000,
+		circulatingStock: 500000
+	},
+	{
+		name: "阿里巴巴",
+		stockCode: "Alibaba",
+		stockTotal: 1000000,
+		circulatingStock: 500000
+	},
+	{
+		name: "腾讯",
+		stockCode: "TX",
+		stockTotal: 1000000,
+		circulatingStock: 500000
+	}
+]

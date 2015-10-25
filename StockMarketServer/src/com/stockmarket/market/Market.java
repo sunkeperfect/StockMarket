@@ -5,28 +5,34 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.stockmarket.model.Order;
 import com.stockmarket.model.Order.OrderType;
 
+@Component
 public class Market {
 
-	private static Market sMarket;
-	public static void init() {
-		sMarket = new Market();
-	}
-	
-	public static Market getInstance() {
-		return sMarket;
-	}
+//	public  void init() {
+//		sMarket = new Market();
+//	}
+//	
+//	public static Market getInstance() {
+//		return sMarket;
+//	}
 	
 	private static final long CHECKOUT_INTERVAL = 5 * 1000L;//2 * 60 * 1000L;
 	
 	private final List<TradingCenter> mTradingCenters = new ArrayList<TradingCenter>();
-	private IMarketDataSource mMarketDataSource = new TestMarketDataSource();
+	@Autowired
+	private MarketDataSource marketDataSource;
+
 	private Timer mTimer;
 	public Market() {
 		loadTradingCenters();
-		simulation();
+//		simulation();
 	}
 	
 	public void buy(Order buyOrder) {
@@ -59,7 +65,8 @@ public class Market {
 	 */
 	private void loadTradingCenters() {
 		mTradingCenters.clear();
-		List<TradingCenter> tradingCenters = mMarketDataSource.loadTradingCenters();
+		System.out.println("marketDataSource==null? "+marketDataSource==null+"-----------");
+		List<TradingCenter> tradingCenters = marketDataSource.loadTradingCenters();
 		if (null != tradingCenters) {
 			mTradingCenters.addAll(tradingCenters);
 		}
@@ -70,8 +77,8 @@ public class Market {
 		System.out.println("-");
 		System.out.println("-");
 		System.out.println("-");
-		
-		//TODO data list changed
+//		
+//		//TODO data list changed
 	}
 	/**
 	 * 根据stockcode获取交易中心

@@ -1,5 +1,6 @@
 package com.stockmarket.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +15,8 @@ import com.stockmarket.model.Order;
 @Controller
 public class OrderController {
 
-	
-	
+	@Autowired
+	Market market;
 	/**
 	 * 
 	 * @param order
@@ -35,7 +36,7 @@ public class OrderController {
 		}
 		
 		
-		Market.getInstance().buy(order);
+		market.buy(order);
 		
 		result.setCode(200);
 		result.setMsg("操作成功");
@@ -46,6 +47,7 @@ public class OrderController {
 	
 	@RequestMapping(value="/order/sell", method = RequestMethod.POST)
 	public @ResponseBody JsonResult sell(@ModelAttribute("order") Order order) {
+
 		JsonResult result = new JsonResult();
 		System.out.println("sell stockCode===>" + order.getStockCode());
 //		if (StringUtils.isEmpty(order.getStockCode())) {
@@ -57,7 +59,7 @@ public class OrderController {
 			return result;
 		}
 		
-		Market.getInstance().sell(order);
+		market.sell(order);
 		result.setCode(200);
 		result.setMsg("操作成功");
 		result.setData(order);

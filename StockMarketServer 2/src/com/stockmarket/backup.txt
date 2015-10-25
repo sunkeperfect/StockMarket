@@ -1,0 +1,250 @@
+private BuyOrderTradingProcessor sHead;
+	private void checkoutInner() {
+		System.out.println(String.format("正在结算'%s'公司的股票交易中心", getCompany().getName()));
+		if (sellList.isEmpty()) {
+			System.out.println(String.format("暂时没有出售'%s'公司股票的订单", getCompany().getName()));
+			return ;
+		}
+		
+		//TODO “卖出”股票的订单进行升序排序
+		Collections.sort(sellList, sInc);
+		
+		//TODO 根据订单的加入时间迭代获取“买入”订单，并匹配？？？NO
+		Iterator<Order> ite = buyList.iterator();//buyList.descendingIterator();
+		while (ite.hasNext()) {
+			Order buyItem = ite.next();
+			if (matchBuyOrder(buyItem)) {
+				ite.remove();
+				//TODO 通知buyItem结算成功
+				
+			}
+		}
+	}
+	
+	/**
+	 * sellList 确认不为空列表，并且已经按照升序排列
+	 * 
+	 * @return 如果“买入”订单完全处理掉，返回true
+	 */
+	private boolean matchBuyOrder(Order buyOrder) {
+		System.out.println("正在匹配---->" + buyOrder);
+		
+		// 购买股票订单的价格不在出售价格的区间内
+		//TODO 判断出售订单的最低价格是否已经高于购买价格
+		Order firstSellOrder = sellList.get(0);
+		if (firstSellOrder.getPrice() > buyOrder.getPrice()) {
+			System.out.println(String.format("出售价格最低为%.2f，高于购买订单价格%.2f",
+					firstSellOrder.getPrice(),
+					buyOrder.getPrice()));
+			return false;
+		}
+		
+		// 开始计算
+		BuyOrderTradingProcessor tradingProcessor = calculate(buyOrder, sellList);
+		try {
+			if (tradingProcessor.isNumberMatched()) {
+				System.out.printf("订单（%s——%s|%s|%d|%.2f）交易完成 %n", 
+						buyOrder.getId(),
+						getCompany().getName(),
+						getCompany().getStockCode(), 
+						buyOrder.getNumber(), 
+						buyOrder.getPrice()
+				);
+				System.out.println(tradingProcessor.matchedSellOrders);
+			} else {
+				System.out.printf("订单（%s——%s|%s|%d|%.2f）交易尚未完成，剩下%d股没有匹配 %n", 
+						buyOrder.getId(),
+						getCompany().getName(),
+						getCompany().getStockCode(), 
+						buyOrder.getNumber(), 
+						tradingProcessor.numberUnmatched()
+				);
+			}
+			// 确认
+			tradingProcessor.deal();
+			return tradingProcessor.isNumberMatched();
+		} finally {
+			// 回收对象
+			tradingProcessor.recycle();
+		}
+	}
+	
+	private BuyOrderTradingProcessor calculate(Order buyOrder, List<Order> sellList) {
+//		if (null == sHead) {
+//			sHead = new TradingProcessor(buyOrder, sellList);
+//		}
+		BuyOrderTradingProcessor tradingProcessor = new BuyOrderTradingProcessor();
+		tradingProcessor.tryDeal(buyOrder, sellList);
+		return tradingProcessor;
+	}
+	
+	private class BuyOrderTradingProcessor {
+		private BuyOrderTradingProcessor next;
+		public void recycle() {
+			init();
+//			sHead.next = this;
+		}
+		
+		private Order buyOrder;
+		private final List<Order> allSellOrders = new ArrayList<Order>();
+		private final List<Order> matchedSellOrders = new ArrayList<Order>();
+		private final List<Order> allMatchedSellOrders = new ArrayList<Order>();
+		private final TradingStepResult mTradingStepResult = new TradingStepResult();
+		private long matchedNumber;
+		private float matchedTotalPrice;
+		private BuyOrderTradingProcessor() { }
+		
+		private void init() {
+			this.buyOrder = null;
+			this.allSellOrders.clear();
+			this.matchedSellOrders.clear();
+			this.allMatchedSellOrders.clear();
+			this.mTradingStepResult.reset(null, null);
+			this.matchedNumber = 0L;
+			this.matchedTotalPrice = 0f;
+		}
+		
+		/**
+		 * 尝试计算
+		 */
+		private void tryDeal(Order buyOrder, List<Order> sellList) {
+			this.buyOrder = buyOrder;
+			this.allSellOrders.addAll(sellList);
+			
+			// 购买股票订单的价格在出售价格的区间内
+			for (Order sellItem : allSellOrders) {
+				//TODO 计算匹配的方案集合
+				TradingStepResult stepResult = tryDealMatchedOrder(buyOrder, sellItem);
+				if (stepResult.type == TradingStepResult.RES_ENOUGH
+						|| stepResult.type == TradingStepResult.RES_MATCHED_NOMORE) {
+					break ;
+				}
+			}
+		}
+		
+		private TradingStepResult tryDealMatchedOrder(Order buyOrder, Order sellOrder) {
+			mTradingStepResult.reset(buyOrder, sellOrder);
+			process: {
+				if (isNumberMatched()) {
+					mTradingStepResult.type = TradingStepResult.RES_ENOUGH;
+					mTradingStepResult.numberConsumed = 0;
+					break process;
+				}
+				
+				final long remaining = numberUnmatched();
+				if (sellOrder.getPrice() <= this.buyOrder.getPrice()) {
+					// 售出价格不高于买入价格，判断数量
+					if (sellOrder.getNumber() > remaining) {
+						// 生成子订单
+						Order subSellOrder = createSubOrder(sellOrder, remaining);
+						appendSellOrder(subSellOrder);
+						mTradingStepResult.type = TradingStepResult.RES_ENOUGH;
+						mTradingStepResult.numberConsumed = remaining;
+					} else if (sellOrder.getNumber() == remaining) {
+						appendSellOrder(sellOrder);
+						mTradingStepResult.type = TradingStepResult.RES_ENOUGH;
+						mTradingStepResult.numberConsumed = remaining;
+					} else { // sellOrder.getNumber() < remaining
+						appendSellOrder(sellOrder);
+						mTradingStepResult.type = TradingStepResult.RES_MATCHED_NOT_ENOUGH;
+						mTradingStepResult.numberConsumed = sellOrder.getNumber();
+					}
+				} else {
+					// 售出价格高于买入价格，判断数量
+					// 基于下面的不等式：
+					// 	原来的总价 + number * 超过的单价
+					// ————————————————————————————————  <= this.buyOrder.getPrice()
+					// 		原来的总数量 + number
+					float tpp = this.buyOrder.getPrice();
+					float tp = this.matchedTotalPrice;
+					float tn = this.matchedNumber;
+					
+					float kp = sellOrder.getPrice();
+					final long maxNeededNumber = Math.min((long) ((tn * tpp - tp) / (kp - tpp)), sellOrder.getNumber());
+					if (maxNeededNumber == 0) {
+						mTradingStepResult.type = TradingStepResult.RES_MATCHED_NOMORE;
+						mTradingStepResult.numberConsumed = 0L;
+						break process;
+					}
+					
+					if (maxNeededNumber > remaining) {
+						// 生成子订单
+						Order subSellOrder = createSubOrder(sellOrder, remaining);
+						appendSellOrder(subSellOrder);
+						mTradingStepResult.type = TradingStepResult.RES_ENOUGH;
+						mTradingStepResult.numberConsumed = remaining;
+					} else if (maxNeededNumber == remaining) {
+						if (maxNeededNumber == sellOrder.getNumber()) {
+							// 如果
+							appendSellOrder(sellOrder);
+							mTradingStepResult.type = TradingStepResult.RES_ENOUGH;
+							mTradingStepResult.numberConsumed = remaining;
+						} else {
+							// maxNeededNumber < sellOrder.getNumber()
+							// 生成子订单
+							Order subSellOrder = createSubOrder(sellOrder, remaining);
+							appendSellOrder(subSellOrder);
+							mTradingStepResult.type = TradingStepResult.RES_ENOUGH;
+							mTradingStepResult.numberConsumed = remaining;
+						}
+					} else {
+						appendSellOrder(sellOrder);
+						mTradingStepResult.type = TradingStepResult.RES_MATCHED_NOT_ENOUGH;
+						mTradingStepResult.numberConsumed = sellOrder.getNumber();
+					}
+				}
+			}
+			return mTradingStepResult;
+		}
+		
+		private Order createSubOrder(Order sellOrder, long number) {
+			Order subSellOrder = new Order();
+			subSellOrder.setStockCode(sellOrder.getStockCode());
+			subSellOrder.setType(sellOrder.getType());
+			subSellOrder.setPrice(sellOrder.getPrice());
+			subSellOrder.setNumber(number);
+			// TODO 扣除子订单的数量
+			sellOrder.setNumber(sellOrder.getNumber() - number);
+			return subSellOrder;
+		}
+		
+		private void appendSellOrder(Order sellOrder) {
+			matchedSellOrders.add(sellOrder);
+			matchedNumber += sellOrder.getNumber();
+			matchedTotalPrice += (sellOrder.getNumber() * sellOrder.getPrice());
+		}
+		
+		public void deal() {
+			// save
+			for (Order sellItem : allMatchedSellOrders) {
+				TradingCenter.this.sellList.remove(sellItem);
+			}
+		}
+		
+		public boolean isNumberMatched() {
+			return buyOrder.getNumber() == matchedNumber;
+		}
+		
+		public long numberUnmatched() {
+			return buyOrder.getNumber() - matchedNumber;
+		}
+	}
+	
+	private class TradingStepResult {
+		private static final int RES_NONE = 0;
+		private static final int RES_MATCHED_NOT_ENOUGH = RES_NONE + 1;
+		private static final int RES_ENOUGH = RES_NONE + 2;
+		private static final int RES_MATCHED_NOMORE = RES_NONE + 3;
+		
+		public int type = RES_NONE;
+		public Order buyOrder;
+		public Order sellOrder;
+		public long numberConsumed;
+		
+		public void reset(Order buyOrder, Order sellOrder) {
+			this.type = RES_NONE;
+			this.buyOrder = buyOrder;
+			this.sellOrder = sellOrder;
+			this.numberConsumed = 0L;
+		}
+	}

@@ -2,6 +2,7 @@ package com.stockmarket.controller;
 
 import java.util.ArrayList;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +18,8 @@ import com.stockmarket.model.Stock;
 
 @Controller
 public class StockController {
+	@Autowired
+	Market market;
 	/**
 	 * 获取所有股票列表
 	 */
@@ -37,7 +40,7 @@ public class StockController {
 		ArrayList<Stock> list = new ArrayList<Stock>();
 		String[] array = codes.split(",");
 		for (String code : array) {
-			TradingCenter trading = Market.getInstance().findTradingCenterBySN(code);
+			TradingCenter trading = market.findTradingCenterBySN(code);
 			if (trading != null) {
 				list.add(new Stock(trading));
 			}
@@ -51,6 +54,7 @@ public class StockController {
 	@RequestMapping(value="stock/test",method=RequestMethod.GET)
 	@ResponseBody
 	public Object getTest(){
+
 		JsonResult result = new JsonResult();
 		result.setCode(200);
 		result.setMsg("操作成功");

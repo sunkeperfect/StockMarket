@@ -4,14 +4,18 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.springframework.stereotype.Repository;
 
 import com.stockmarket.dao.ICompanyDao;
 import com.stockmarket.dao.MySessionFactory;
 import com.stockmarket.model.Company;
-
+@Repository("companyDao")
 public class CompanyDao implements ICompanyDao {
-	Session session=MySessionFactory.getSession();
-
+	public CompanyDao() {
+		// TODO Auto-generated constructor stub
+		 session=MySessionFactory.getSession();
+	}
+	Session session;
 	@Override
 	public boolean add(Company company) {
 		// TODO Auto-generated method stub
@@ -39,6 +43,13 @@ public class CompanyDao implements ICompanyDao {
 		long count=Long.parseLong(session.createSQLQuery(" select count(*) from Company where numbercode=? or stockcode=?")
 				.setParameter(0, numberCode).setParameter(1,stockCode).uniqueResult().toString());
 		return !(count==0);
+	}
+
+	@Override
+	public List<Company> getCompanyList() {
+		List<Company> list=null;
+		list=(List<Company>) session.createSQLQuery("select * from Company");
+		return list;
 	}
 	
 }

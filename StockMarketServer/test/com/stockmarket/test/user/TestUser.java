@@ -5,8 +5,6 @@ import static org.junit.Assert.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.junit.After;
 import org.junit.Before;
@@ -48,7 +46,7 @@ public class TestUser {
 	}
 	@Test
 	public void testGetUserByDeviceId(){
-		User user=userDao.getUserByDeviceId("d2");
+		User user=userDao.getUserByDeviceId("d3");
 		assertNotNull(user);
 		System.out.println(" testGetUserByDeviceId user:"+user.toString());
 	}
