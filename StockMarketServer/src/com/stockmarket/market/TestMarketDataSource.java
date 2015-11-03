@@ -15,12 +15,12 @@ import com.stockmarket.model.Order.OrderType;
 public class TestMarketDataSource implements IMarketDataSource {
 
 	@Override
-	public List<TradingCenter> loadTradingCenters() {
-		List<TradingCenter> tradingCenters = new ArrayList<TradingCenter>();
+	public List<TradingIntermediary> loadTradingCenters() {
+		List<TradingIntermediary> tradingCenters = new ArrayList<TradingIntermediary>();
 		try {
 			List<Company> companies = loadCompanies();
 			for (Company company : companies) {
-				TradingCenter tradingCenter = new TradingCenter(company);
+				TradingIntermediary tradingCenter = new TradingIntermediary(company);
 				loadTradingCenter(tradingCenter);
 				tradingCenters.add(tradingCenter);
 			}
@@ -46,7 +46,7 @@ public class TestMarketDataSource implements IMarketDataSource {
 	}
 
 	@Override
-	public void loadTradingCenter(TradingCenter tradingCenter) {
+	public void loadTradingCenter(TradingIntermediary tradingCenter) {
 		synchronized (tradingCenter) {
 			try {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(

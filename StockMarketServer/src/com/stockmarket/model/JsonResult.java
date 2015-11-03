@@ -2,7 +2,12 @@ package com.stockmarket.model;
 
 import java.io.Serializable;
 
-public class JsonResult implements Serializable {
+public class JsonResult<T> implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public JsonResult() {
 		code = 10000;
 		msg = "服务器处理异常！";
@@ -11,7 +16,7 @@ public class JsonResult implements Serializable {
 
 	int code;
 	String msg;
-	Object data;
+	T data;
 
 	public int getCode() {
 		return code;
@@ -29,12 +34,12 @@ public class JsonResult implements Serializable {
 		this.msg = msg;
 	}
 
-	public Object getData() {
+	public T getData() {
 		return data;
 	}
 
-	public void setData(Object value) {
-		this.data	 = value;
+	public void setData(T value) {
+		this.data = value;
 	}
 
 }

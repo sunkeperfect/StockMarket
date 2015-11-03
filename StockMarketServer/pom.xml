@@ -15,6 +15,8 @@
 		<cxf.version>3.0.2</cxf.version>
 		<spring.version>4.1.3.RELEASE</spring.version>
 		<jstl.version>1.1.0</jstl.version>
+		<slf4j.version>1.7.6</slf4j.version>
+
 	</properties>
 	<dependencies>
 		<dependency>
@@ -39,6 +41,7 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>javax.transaction</groupId>
 			<artifactId>jta</artifactId>
@@ -148,6 +151,11 @@
 			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-test</artifactId>
+		<version>${spring.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-hibernate3</artifactId>
 			<version>2.0.8</version>
@@ -169,6 +177,17 @@
 			<artifactId>aspectjlib</artifactId>
 			<version>1.6.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+
 
 		<!-- quartz -->
 		<dependency>

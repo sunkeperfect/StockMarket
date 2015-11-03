@@ -19,4 +19,12 @@ public class CompanyService {
 	public List<Company> getCompanyList() {
 		return companyDao.getCompanyList();
 	}
+	/**
+	 * 添加
+	 * @param company
+	 * @return
+	 */
+	public boolean add(Company company){
+		return companyDao.add(company);
+	}
 }

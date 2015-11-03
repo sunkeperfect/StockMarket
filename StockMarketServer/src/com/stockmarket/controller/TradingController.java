@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.stockmarket.market.Market;
-import com.stockmarket.market.TradingCenter;
+import com.stockmarket.market.TradingIntermediary;
 import com.stockmarket.model.JsonResult;
 
 @Controller
@@ -21,7 +21,8 @@ public class TradingController {
 	@RequestMapping(value = "trading/list" ,method=RequestMethod.GET)
 	public @ResponseBody JsonResult orderListByCode(String stock_code) {
 		JsonResult result = new JsonResult();
-		TradingCenter tradingCenter = market.findTradingCenterBySN(stock_code);
+		System.out.println(market.toString());
+		TradingIntermediary tradingCenter = market.findTradingCenterBySN(stock_code);
 		if (tradingCenter == null) {
 			result.setCode(200);
 			result.setMsg("没有这个公司!");

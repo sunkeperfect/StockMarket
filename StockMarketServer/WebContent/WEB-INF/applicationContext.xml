@@ -59,8 +59,8 @@
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
 		p:prefix="/WEB-INF/view/" p:suffix=".jsp">
 	</bean>
-	<bean class="com.stockmarket.common.InstantiationTracingBeanPostProcessor" />
-
+<!--  <bean id="instantiation" class="com.stockmarket.common.InstantiationTracingBeanPostProcessor" />
+-->
 	<!-- 自定义exception处理 -->
 	
 	

@@ -18,12 +18,11 @@ public class MySessionFactory {
     static{
          
     	// 创建配置对象
-    			Configuration config = new Configuration().configure();
     			// 创建服务注册对象
 //    			StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
 //    					.applySettings(config.getProperties()).build();
     			// 创建会话工厂对象
-    			sessionFactory = config.buildSessionFactory();
+    			sessionFactory =  new Configuration().configure().buildSessionFactory();
     			session=sessionFactory.openSession();
     		
     }

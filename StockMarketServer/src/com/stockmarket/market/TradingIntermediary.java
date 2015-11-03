@@ -11,12 +11,12 @@ import com.stockmarket.model.Company;
 import com.stockmarket.model.Order;
 
 /**
- * 交易中心-模拟某个公司的买入卖出股票交易 一个公司一个交易中心对象
+ * 交易中心-模拟某个公司的买入卖出股票交易 一个公司一个交易中介对象
  * 
  * @author yong01.yin
  *
  */
-public class TradingCenter {
+public class TradingIntermediary {
 	
 	// 按照股票价格升序，同样的价格再按照创建时间早晚升序
 	static final Comparator<Order> sInc = new Comparator<Order>() {
@@ -54,7 +54,7 @@ public class TradingCenter {
 		this.currentPrice = currentPrice;
 	}
 
-	public TradingCenter(Company company) {
+	public TradingIntermediary(Company company) {
 		this.company = company;
 	}
 
@@ -119,7 +119,7 @@ public class TradingCenter {
 		public Processor() {
 		}
 
-		public void process(TradingCenter tradingCenter) {
+		public void process(TradingIntermediary tradingCenter) {
 			List<Order> buyList = tradingCenter.getBuyList();
 
 			// 判断特殊情况1：
@@ -140,7 +140,7 @@ public class TradingCenter {
 			doProcessAfterCheck(tradingCenter);
 		}
 
-		private void doProcessAfterCheck(TradingCenter tradingCenter) {
+		private void doProcessAfterCheck(TradingIntermediary tradingCenter) {
 			// copy
 			List<Order> buyList = new ArrayList<Order>(
 					tradingCenter.getBuyList());
@@ -148,7 +148,7 @@ public class TradingCenter {
 																// ArrayList<Order>(tradingCenter.getSellList());
 
 			// TODO “卖出”股票的订单进行升序排序
-			Collections.sort(sellList, TradingCenter.sInc);
+			Collections.sort(sellList, TradingIntermediary.sInc);
 
 			// TODO 根据订单的加入时间迭代获取“买入”订单，并匹配？？？NO
 			Iterator<Order> buyListIte = buyList.iterator();// buyList.descendingIterator();

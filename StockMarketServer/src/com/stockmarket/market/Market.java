@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -13,7 +15,8 @@ import com.stockmarket.model.Order;
 import com.stockmarket.model.Order.OrderType;
 
 @Component
-public class Market {
+@Scope("singleton")
+public class Market implements InitializingBean,DisposableBean {
 
 //	public  void init() {
 //		sMarket = new Market();
@@ -25,19 +28,23 @@ public class Market {
 	
 	private static final long CHECKOUT_INTERVAL = 5 * 1000L;//2 * 60 * 1000L;
 	
-	private final List<TradingCenter> mTradingCenters = new ArrayList<TradingCenter>();
+	private final List<TradingIntermediary> mTradingCenters = new ArrayList<TradingIntermediary>();
 	@Autowired
 	private MarketDataSource marketDataSource;
 
 	private Timer mTimer;
 	public Market() {
-		loadTradingCenters();
-//		simulation();
 	}
-	
+	public void init(){
+		loadTradingCenters();
+	}
+	/**
+	 * 买入
+	 * @param buyOrder
+	 */
 	public void buy(Order buyOrder) {
 		buyOrder.setType(OrderType.Buy);
-		TradingCenter tradingCenter = findTradingCenterBySN(buyOrder.getStockCode());
+		TradingIntermediary tradingCenter = findTradingCenterBySN(buyOrder.getStockCode());
 		if (null == tradingCenter) {
 			System.out.printf("找不到股票代码为%s的公司 %n", buyOrder.getStockCode());
 			System.out.println("-");
@@ -45,10 +52,13 @@ public class Market {
 		}
 		tradingCenter.buy(buyOrder);
 	}
-	
+	/**
+	 * 卖出
+	 * @param sellOrder
+	 */
 	public void sell(Order sellOrder) {
 		sellOrder.setType(OrderType.Sell);
-		TradingCenter tradingCenter = findTradingCenterBySN(sellOrder.getStockCode());
+		TradingIntermediary tradingCenter = findTradingCenterBySN(sellOrder.getStockCode());
 		if (null == tradingCenter) {
 			System.out.printf("找不到股票代码为%s的公司 %n", sellOrder.getStockCode());
 			System.out.println("-");
@@ -65,18 +75,18 @@ public class Market {
 	 */
 	private void loadTradingCenters() {
 		mTradingCenters.clear();
-		System.out.println("marketDataSource==null? "+marketDataSource==null+"-----------");
-		List<TradingCenter> tradingCenters = marketDataSource.loadTradingCenters();
+		List<TradingIntermediary> tradingCenters = marketDataSource.loadTradingCenters();
 		if (null != tradingCenters) {
 			mTradingCenters.addAll(tradingCenters);
 		}
 		
-		for (TradingCenter tradingCenter : mTradingCenters) {
+		for (TradingIntermediary tradingCenter : mTradingCenters) {
 			System.out.println(tradingCenter.toSimpleString());
 		}
 		System.out.println("-");
 		System.out.println("-");
 		System.out.println("-");
+		System.out.println(this.toString());
 //		
 //		//TODO data list changed
 	}
@@ -85,20 +95,25 @@ public class Market {
 	 * @param sn
 	 * @return
 	 */
-	public TradingCenter findTradingCenterBySN(String sn) {
-		for (TradingCenter tradingCenter : mTradingCenters) {
+	public TradingIntermediary findTradingCenterBySN(String sn) {
+		for (TradingIntermediary tradingCenter : mTradingCenters) {
 			if (tradingCenter.getCompany().getStockCode().equals(sn)) {
 				return tradingCenter;
 			}
 		}
 		return null;
 	}
+	public List<TradingIntermediary> getTradingCenters(){
+		System.out.println(this.toString());
+
+		return mTradingCenters;
+	}
 	
 	/**
 	 * 触发交易市场结算
 	 */
 	private void checkoutAtInterval() {
-		for (TradingCenter tradingCenter : mTradingCenters) {
+		for (TradingIntermediary tradingCenter : mTradingCenters) {
 			tradingCenter.checkout();
 		}
 		System.out.println("-");
@@ -115,6 +130,16 @@ public class Market {
 				checkoutAtInterval();
 			}
 		}, 0, CHECKOUT_INTERVAL);
+	}
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		// TODO Auto-generated method stub
+		init();
+	}
+	@Override
+	public void destroy() throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 	
 //	public static void main(String[] args) {

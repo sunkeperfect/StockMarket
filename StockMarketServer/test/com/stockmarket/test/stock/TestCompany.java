@@ -3,14 +3,18 @@ package com.stockmarket.test.stock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.stockmarket.dao.impl.CompanyDao;
 import com.stockmarket.model.Company;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@org.springframework.test.context.ContextConfiguration(locations = "file:WebContent/WEB-INF/applicationContext.xml") 
 public class TestCompany {
-	
-	CompanyDao companyDao=new CompanyDao();
+	@Autowired
+	CompanyDao companyDao;
 	@Before
 	public void init(){
 		

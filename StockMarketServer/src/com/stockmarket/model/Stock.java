@@ -1,9 +1,9 @@
 package com.stockmarket.model;
 
-import com.stockmarket.market.TradingCenter;
+import com.stockmarket.market.TradingIntermediary;
 
 public class Stock {
-	public Stock(TradingCenter trading){
+	public Stock(TradingIntermediary trading){
 		this.companyName=trading.getCompany().getName();
 		this.marketValue=trading.getCompany().getStockTotal()*trading.getCurrentPrice();
 		this.stockCode=trading.getCompany().getStockCode();

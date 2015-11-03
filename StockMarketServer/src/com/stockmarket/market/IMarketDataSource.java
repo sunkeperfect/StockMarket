@@ -9,7 +9,7 @@ public interface IMarketDataSource {
 	/**
 	 * 加载数据库所有交易中心
 	 */
-	List<TradingCenter> loadTradingCenters();
+	List<TradingIntermediary> loadTradingCenters();
 	
 	/**
 	 * 加载数据库公司信息
@@ -21,6 +21,6 @@ public interface IMarketDataSource {
 	 * 
 	 * @param tradingCenter 需要填充数据的交易中心对象
 	 */
-	void loadTradingCenter(TradingCenter tradingCenter);
+	void loadTradingCenter(TradingIntermediary tradingCenter);
 	
 }

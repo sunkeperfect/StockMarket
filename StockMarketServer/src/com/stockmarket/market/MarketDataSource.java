@@ -11,15 +11,15 @@ import com.stockmarket.model.Company;
 import com.stockmarket.service.CompanyService;
 @Component
 public class MarketDataSource implements IMarketDataSource {
-//	@Autowired
-//	CompanyService companyService;
+	@Autowired
+	CompanyService companyService;
 	@Override
-	public List<TradingCenter> loadTradingCenters() {
-		List<TradingCenter> tradingCenters = new ArrayList<TradingCenter>();
+	public List<TradingIntermediary> loadTradingCenters() {
+		List<TradingIntermediary> tradingCenters = new ArrayList<TradingIntermediary>();
 		try {
 			List<Company> companies = loadCompanies();
 			for (Company company : companies) {
-				TradingCenter tradingCenter = new TradingCenter(company);
+				TradingIntermediary tradingCenter = new TradingIntermediary(company);
 				loadTradingCenter(tradingCenter);
 				tradingCenters.add(tradingCenter);
 			}
@@ -33,8 +33,8 @@ public class MarketDataSource implements IMarketDataSource {
 	@Override
 	public List<Company> loadCompanies() {
 		try {
-//			List<Company> companies = companyService.getCompanyList();
-			List<Company> companies=new ArrayList<Company>();
+			List<Company> companies = companyService.getCompanyList();
+		//	List<Company> companies=new ArrayList<Company>();
 			return companies;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -43,7 +43,7 @@ public class MarketDataSource implements IMarketDataSource {
 	}
 
 	@Override
-	public void loadTradingCenter(TradingCenter tradingCenter) {
+	public void loadTradingCenter(TradingIntermediary tradingCenter) {
 		synchronized (tradingCenter) {
 			// try {
 			// BufferedReader reader = new BufferedReader(new InputStreamReader(

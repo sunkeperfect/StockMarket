@@ -6,6 +6,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="var" path="M2_REPO/javax/transaction/jta/1.1/jta-1.1.jar" sourcepath="M2_REPO/javax/transaction/jta/1.1/jta-1.1-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/servlet/jstl/1.1.0/jstl-1.1.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/servlet/javax.servlet-api/3.0.1/javax.servlet-api-3.0.1.jar" sourcepath="M2_REPO/javax/servlet/javax.servlet-api/3.0.1/javax.servlet-api-3.0.1-sources.jar"/>

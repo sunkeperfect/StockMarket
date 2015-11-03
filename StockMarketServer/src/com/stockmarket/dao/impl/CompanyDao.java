@@ -1,5 +1,6 @@
 package com.stockmarket.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Session;
@@ -13,9 +14,8 @@ import com.stockmarket.model.Company;
 public class CompanyDao implements ICompanyDao {
 	public CompanyDao() {
 		// TODO Auto-generated constructor stub
-		 session=MySessionFactory.getSession();
 	}
-	Session session;
+	Session session=MySessionFactory.getSession();
 	@Override
 	public boolean add(Company company) {
 		// TODO Auto-generated method stub
@@ -48,7 +48,7 @@ public class CompanyDao implements ICompanyDao {
 	@Override
 	public List<Company> getCompanyList() {
 		List<Company> list=null;
-		list=(List<Company>) session.createSQLQuery("select * from Company");
+		list=session.createSQLQuery("select * from Company").addEntity(Company.class).list();
 		return list;
 	}
 	
